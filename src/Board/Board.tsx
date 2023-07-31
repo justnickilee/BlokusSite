@@ -1,5 +1,5 @@
 import boardCSS from './board.module.css'
-import { BoardPiece, GameState } from '../GameState/GameState'
+import { BoardPiece, Coordinate, GameState } from '../GameState/GameState'
 import { useEffect, useId, useState } from 'react'
 import { TPiece } from '../Piece/Piece'
 import clsx from 'clsx';
@@ -19,9 +19,35 @@ const makeEmptyBoard = (): TBoardUnit[][] => {
 type BoardProps = { gameState: GameState }
 
 export default function Board(props: BoardProps) {
-    const [selectedPiece, setSelectedPiece] = useState<TPiece | undefined>(undefined)
+
+    // const selectedPieceCoordinates = () => {
+    //     const coordinates: Coordinate[] = [];
+    //     if (props.gameState.selectedPiece) {
+    //         const p = props.gameState.selectedPiece;
+    //         const coord = props.gameState.selectedLocation;
+    //         (p.shape).forEach((row, r) => {
+    //             row.forEach((unit, c) => {
+    //                 if (unit) {
+    //                     coordinates.push({row: r + coord.row, col: c + coord.col})
+    //                 }
+    //             })
+    //         })
+    //         return coordinates;
+    //     } else {
+    //         return coordinates;
+    //     }
+    // };
 
     const boardDisplay = getNewBoard(props.gameState.onBoard).map((row, rowIndex) => {
+        const isASelectedUnit = (r: number, c: number) => {
+            for (const coordinate of selectedPieceCoordinates(props.gameState.selectedPiece, props.gameState.selectedLocation)) {
+                if (coordinate.row == r && coordinate.col == c) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         return (
             <div
                 key={rowIndex}
@@ -34,6 +60,7 @@ export default function Board(props: BoardProps) {
                             className={clsx(boardCSS.unit, {
                                 [boardCSS.p1Unit]: unit.status === 'p1',
                                 [boardCSS.p2Unit]: unit.status === 'p2',
+                                [boardCSS.selectedUnit]: isASelectedUnit(rowIndex, colIndex)
                             })}
                         />
                     );
@@ -44,6 +71,39 @@ export default function Board(props: BoardProps) {
 
     return (
         <div className={boardCSS.boardSection}>{boardDisplay}</div>
+    );
+}
+
+function selectedPieceCoordinates(selectedPiece: TPiece | undefined, selectedLocation: Coordinate): Coordinate[] {
+    const coordinates: Coordinate[] = [];
+    if (selectedPiece) {
+        const coord = selectedLocation;
+        (selectedPiece.shape).forEach((row, r) => {
+            row.forEach((unit, c) => {
+                if (unit) {
+                    coordinates.push({row: r + coord.row, col: c + coord.col})
+                }
+            })
+        })
+        return coordinates;
+    } else {
+        return coordinates;
+    }
+};
+
+type BoardNavProps = {
+    onArrowClick: (dir: 'rot' | 'u' | 'd' | 'r' | 'l') => void
+}
+
+export function BoardNavigation(props: BoardNavProps) {
+    return (
+        <span className={boardCSS.boardNavSection}>
+            <button type='button' onClick={() => props.onArrowClick('rot')}>&#10227;</button>
+            <button type='button' onClick={() => props.onArrowClick('u')}>&#8593;</button>
+            <button type='button' onClick={() => props.onArrowClick('d')}>&#8595;</button>
+            <button type='button' onClick={() => props.onArrowClick('r')}>&#8594;</button>
+            <button type='button' onClick={() => props.onArrowClick('l')}>&#8592;</button>
+        </span>
     );
 }
 

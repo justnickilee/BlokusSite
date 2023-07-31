@@ -1,6 +1,16 @@
 .page {
     display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 90svh;
+}
+
+.boardAndStatusSection {
+    display: flex;
     flex-direction: column;
     justify-content: start;
     align-items: center;
+    width: 90%;
+    height: 100%;
 }

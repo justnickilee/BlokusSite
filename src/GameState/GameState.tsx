@@ -1,8 +1,9 @@
-import { useId, useReducer } from "react"
+import { useId, useReducer, useEffect } from "react"
 import { TPiece, getScoreOfPiece } from "../Piece/Piece"
-import Board from "../Board/Board";
+import Board, { BoardNavigation } from "../Board/Board";
 import Inventory from "../Inventory/Inventory";
 import pageCSS from './page.module.css'
+import GameStatusDisplay from "../GameStatusDisplay/GameStatusDisplay";
 
 
 export type Coordinate = {
@@ -26,6 +27,8 @@ export type GameState = {
     turn: 'p1' | 'p2';
     score: [number, number];
     hasStoppedPlaying: [boolean, boolean]
+    selectedPiece: TPiece | undefined
+    selectedLocation: Coordinate
 }
 
 const initialPieceShapes: Boolean[][][] = [
@@ -55,7 +58,9 @@ export default function GameController() {
         p2Inventory: getInitialShapes('p2'),
         turn: 'p1',
         score: [0, 0],
-        hasStoppedPlaying: [false, false]
+        hasStoppedPlaying: [false, false],
+        selectedPiece: undefined,
+        selectedLocation: { row: 1, col: 1 }
     });
 
 
@@ -67,34 +72,76 @@ export default function GameController() {
         })
     }
 
-
     const handlePieceClick = (piece: TPiece) => {
         if (piece.player == gameState.turn) {
             // check if move is legal
-        
             dispatch({
-                type: 'playerMadeAMove',
-                piece,
-                coord: { row: 1, col: 1 },
-            })
+                type: 'playerSelectedAPiece',
+                piece
+            });
         } else {
             alert('Wait your turn!');
         }
     }
 
+    const handlePlayerMove = (piece: TPiece) => {
+        dispatch({
+            type: 'playerMadeAMove',
+            piece,
+            coord: { row: 1, col: 1 },
+        })
+    }
+
+
+    const handleBoardNav = (dir: 'rot' | 'u' | 'd' | 'r' | 'l') => {
+        if (dir === 'rot') {
+            console.log('rotate')
+        } else {
+            console.log(dir)
+        }
+        dispatch({
+            type: 'playerMovedSelectedPiece',
+            dir
+        })
+    }
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            console.log(e.key)
+            switch (e.key) {
+                case 'ArrowLeft': { return handleBoardNav('l') }
+                case 'ArrowUp': { return handleBoardNav('u') }
+                case 'ArrowRight': { return handleBoardNav('r') }
+                case 'ArrowDown': { return handleBoardNav('d') }
+                case ' ': { console.log('place me!'); return}
+                default: return;
+            }
+        }
+
+        document.addEventListener('keydown', handleKeyDown);
+
+        // Don't forget to clean up
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
 
     return (
         <div className={pageCSS.page}>
             <Inventory
-                i={gameState.p2Inventory}
-                player='p2'
-                onPieceClick={handlePieceClick}
-            />
-            <Board gameState={gameState}></Board>
-            {/* Score */}
-            <Inventory
                 i={gameState.p1Inventory}
                 player='p1'
+                onPieceClick={handlePieceClick}
+            />
+            <span className={pageCSS.boardAndStatusSection}>
+                <GameStatusDisplay
+                    score={gameState.score}
+                    turn={gameState.turn}
+                />
+                <Board gameState={gameState}></Board>
+            </span>
+            <Inventory
+                i={gameState.p2Inventory}
+                player='p2'
                 onPieceClick={handlePieceClick}
             />
 
@@ -105,6 +152,43 @@ export default function GameController() {
 
 function reducer(state: GameState, action: Action): GameState {
     switch (action.type) {
+        case 'playerSelectedAPiece': {
+            return {
+                ...state,
+                selectedPiece: action.piece,
+                selectedLocation: { row: 1, col: 1 }
+            }
+        }
+        case 'playerMovedSelectedPiece': {
+
+            const changedCoordinate = (dir: 'rot' | 'u' | 'd' | 'r' | 'l') => {
+                switch (dir) {
+                    case 'rot': {
+                        // change later to rotate the shape
+                        return { row: state.selectedLocation.row - 1 }
+                    }
+                    case 'u': {
+                        return { row: state.selectedLocation.row - 1 }
+                    }
+                    case 'd': {
+                        return { row: state.selectedLocation.row + 1 }
+                    }
+                    case 'r': {
+                        return { col: state.selectedLocation.col + 1 }
+                    }
+                    case 'l': {
+                        return { col: state.selectedLocation.col - 1 }
+                    }
+                }
+            }
+            return {
+                ...state,
+                selectedLocation: {
+                    ...state.selectedLocation,
+                    ...changedCoordinate(action.dir)
+                }
+            }
+        }
         case 'playerMadeAMove': {
             const filterFn = (piece: TPiece) => piece.key != action.piece.key
             const p1Inventory = action.piece.player === 'p1' ? state.p1Inventory.filter(filterFn) : state.p1Inventory
@@ -140,3 +224,5 @@ function reducer(state: GameState, action: Action): GameState {
 type Action =
     | { type: 'updateHasStoppedPlaying', turn: 'p1' | 'p2', hasStoppedPlaying: [boolean, boolean] }
     | { type: 'playerMadeAMove', piece: TPiece, coord: Coordinate }
+    | { type: 'playerSelectedAPiece', piece: TPiece }
+    | { type: 'playerMovedSelectedPiece', dir: 'rot' | 'u' | 'd' | 'r' | 'l' }
