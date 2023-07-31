@@ -1,0 +1,43 @@
+.pieceP1 {
+    color: lightcoral;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: space-around;
+    margin-right: 20px;
+}
+
+.pieceP2 {
+    color: lightseagreen;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    margin-right: 20px;
+
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: start;
+    height: min-content;
+}
+
+.unit {
+    display: inline-flex;
+    width: 15px;
+    height: 15px;
+    margin: 0%;
+    padding: 0%;
+}
+
+.blank {
+    display: inline-flex;
+    width: 15px;
+    height: 15px;
+    margin: 0%;
+    padding: 0%;
+    color: none;
+}

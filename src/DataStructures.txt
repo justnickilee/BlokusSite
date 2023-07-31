@@ -1,0 +1,39 @@
+Board {
+    gameState: TGameState {
+        States: 
+            p1Turn: Boolean
+            onBoard: BoardPiece[] {
+                piece: TPiece {
+                    id: string
+                    player: string
+                    shape: Boolean[][]
+                }
+                coord: Coordinate {
+                    row: Number
+                    col: Number
+                }
+            }
+            p1Inventory: TPiece[] {
+                piece: TPiece {
+                    id: string
+                    player: string
+                    shape: Boolean[][]
+                }
+            }
+            p2Inventory: TPiece[] {
+                piece: TPiece {
+                    id: string
+                    player: string
+                    shape: Boolean[][]
+                }
+            }
+            score: Number[0,0]
+            hasStoppedPlaying: Boolean[false, false]
+    }
+    States:
+        board: TBoardUnit[][] {
+            status: 'p1' | 'p2' | 'open'
+        }
+        selectedPiece: TPiece | undefined
+        selectedLocation: Coordinate | undefined
+}
