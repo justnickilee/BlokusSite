@@ -239,7 +239,7 @@ export default function GameController() {
         score: [0, 0],
         hasStoppedPlaying: [false, false],
         selectedPiece: undefined,
-        selectedLocation: { row: 1, col: 1 },
+        selectedLocation: { row: 6, col: 6 },
     });
 
     const handleUpdateHasStoppedPlaying = (player: "p1" | "p2") => {
@@ -316,10 +316,10 @@ export default function GameController() {
                     case "ArrowDown": {
                         return handleBoardNav("d");
                     }
-                    case "Shift": {
+                    case " ": {
                         return handlePieceRotation();
                     }
-                    case " ": {
+                    case "Enter": {
                         return handlePlayerMove();
                     }
                     default:
@@ -399,7 +399,7 @@ function reducer(state: GameState, action: Action): GameState {
             return {
                 ...state,
                 selectedPiece: action.piece,
-                selectedLocation: { row: 1, col: 1 },
+                selectedLocation: { row: 6, col: 6 },
             };
         }
         case "playerMovedSelectedPiece": {
