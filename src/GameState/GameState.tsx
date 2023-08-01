@@ -282,11 +282,20 @@ export default function GameController() {
             }
         };
 
-        const handleBoardNav = (dir: "rot" | "u" | "d" | "r" | "l") => {
+        const handleBoardNav = (dir: "u" | "d" | "r" | "l") => {
             dispatch({
                 type: "playerMovedSelectedPiece",
                 dir,
             });
+        };
+
+        const handlePieceRotation = () => {
+            if (gameState.selectedPiece) {
+                dispatch({
+                    type: "playerRotatedSelectedPiece",
+                    piece: gameState.selectedPiece,
+                });
+            }
         };
 
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -305,7 +314,7 @@ export default function GameController() {
                         return handleBoardNav("d");
                     }
                     case "Shift": {
-                        return handleBoardNav("rot");
+                        return handlePieceRotation();
                     }
                     case " ": {
                         return handlePlayerMove();
@@ -352,12 +361,8 @@ function reducer(state: GameState, action: Action): GameState {
             };
         }
         case "playerMovedSelectedPiece": {
-            const changedCoordinate = (dir: "rot" | "u" | "d" | "r" | "l") => {
+            const changedCoordinate = (dir: "u" | "d" | "r" | "l") => {
                 switch (dir) {
-                    case "rot": {
-                        // change later to rotate the shape
-                        return { row: state.selectedLocation.row - 1 };
-                    }
                     case "u": {
                         return { row: state.selectedLocation.row - 1 };
                     }
@@ -380,6 +385,43 @@ function reducer(state: GameState, action: Action): GameState {
                 },
             };
         }
+        case "playerRotatedSelectedPiece": {
+            const rotatedPiece = (): TPiece => {
+                const prevShape: boolean[][] = action.piece.shape;
+                const prevRowLength = prevShape.length;
+                const prevColLength = prevShape[0].length;
+                const newShape = Array(prevColLength)
+                    .fill(null)
+                    .map((row, rowIndex) => {
+                        return Array(prevRowLength)
+                            .fill(null)
+                            .map((col, colIndex) => {
+                                return prevShape[colIndex][rowIndex];
+                            })
+                            .reverse();
+                    });
+                return {
+                    key: action.piece.key,
+                    player: action.piece.player,
+                    shape: newShape,
+                };
+            };
+            return {
+                ...state,
+                selectedPiece: rotatedPiece(),
+            };
+        }
+        // const makeEmptyBoard = (): TBoardUnit[][] => {
+        //     return Array(15)
+        //         .fill(null)
+        //         .map(() => {
+        //             return Array(15)
+        //                 .fill(null)
+        //                 .map(() => {
+        //                     return { status: "open" };
+        //                 });
+        //         });
+        // };
         case "playerMadeAMove": {
             const filterFn = (piece: TPiece) => piece.key != action.piece.key;
             const p1Inventory =
@@ -432,4 +474,5 @@ type Action =
       }
     | { type: "playerMadeAMove"; piece: TPiece; coord: Coordinate }
     | { type: "playerSelectedAPiece"; piece: TPiece }
-    | { type: "playerMovedSelectedPiece"; dir: "rot" | "u" | "d" | "r" | "l" };
+    | { type: "playerMovedSelectedPiece"; dir: "u" | "d" | "r" | "l" }
+    | { type: "playerRotatedSelectedPiece"; piece: TPiece };
