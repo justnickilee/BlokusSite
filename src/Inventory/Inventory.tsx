@@ -4,6 +4,7 @@ import inventoryCSS from "./inventory.module.css";
 type InventoryProps = {
     i: TPiece[];
     player: "p1" | "p2";
+    playerHasStoppedPlaying: boolean;
     onPieceClick: (piece: TPiece) => void;
 };
 
@@ -14,6 +15,13 @@ export default function Inventory(props: InventoryProps) {
         return (
             <Piece
                 piece={piece}
+                player={
+                    props.playerHasStoppedPlaying
+                        ? "stopped"
+                        : props.player == "p1"
+                        ? "p1"
+                        : "p2"
+                }
                 onPieceClick={props.onPieceClick}
                 key={piece.key}
             />
@@ -22,7 +30,15 @@ export default function Inventory(props: InventoryProps) {
 
     return (
         <div className={inventoryCSS.inventorySection}>
-            <div className={inventoryCSS.inventoryTitle}>{title}</div>
+            <div
+                className={`${inventoryCSS.inventoryTitle} ${
+                    props.player == "p1"
+                        ? inventoryCSS.inventoryTitleP1
+                        : inventoryCSS.inventoryTitleP2
+                }`}
+            >
+                {title}
+            </div>
             <div className={inventoryCSS.inventory}>{inventoryList}</div>
         </div>
     );

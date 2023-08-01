@@ -1,20 +1,21 @@
 .pieceP1 {
     color: lightcoral;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: space-around;
-    margin-right: 20px;
 }
 
 .pieceP2 {
     color: lightseagreen;
+}
+
+.pieceStopped {
+    color: gray;
+}
+
+.piece {
     display: flex;
     flex-direction: column;
     justify-content: start;
     align-items: start;
     margin-right: 20px;
-
 }
 
 .row {

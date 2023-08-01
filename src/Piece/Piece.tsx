@@ -1,5 +1,5 @@
+import clsx from "clsx";
 import pieceCSS from "./piece.module.css";
-import { useId } from "react";
 
 // the shape of pieces are defined with a 2d boolean array
 // row = outer array, column = inner arrays
@@ -10,19 +10,26 @@ import { useId } from "react";
 // [    X    ]
 // [    X    ]
 
-export type TPiece = { key: string; player: "p1" | "p2"; shape: boolean[][] };
+export type TPiece = {
+    key: string;
+    player: "p1" | "p2";
+    shape: boolean[][];
+};
 
 type PieceProps = {
     piece: TPiece;
+    player: "p1" | "p2" | "stopped";
     onPieceClick: (piece: TPiece) => void;
 };
 
 export default function Piece(props: PieceProps) {
     return (
         <div
-            className={
-                props.piece.player == "p1" ? pieceCSS.pieceP1 : pieceCSS.pieceP2
-            }
+            className={clsx(pieceCSS.piece, {
+                [pieceCSS.pieceStopped]: props.player == "stopped",
+                [pieceCSS.pieceP1]: props.player == "p1",
+                [pieceCSS.pieceP2]: props.player == "p2",
+            })}
             key={props.piece.key}
             onClick={() => props.onPieceClick(props.piece)}
         >
@@ -34,11 +41,6 @@ export default function Piece(props: PieceProps) {
         </div>
     );
 }
-
-// export function rotatePiece(piece: TPiece) : TPiece {
-//     // function which takes a piece, rotates it, then returns the new piece
-//     return {key: useId(), player: 'p1', shape: [[]] as Boolean[][]}; // just for now obv
-// }
 
 export function getScoreOfPiece(piece: TPiece): number {
     let score = 0;

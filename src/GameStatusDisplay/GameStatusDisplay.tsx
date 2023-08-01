@@ -1,8 +1,10 @@
+import clsx from "clsx";
 import statusDisplayCSS from "./gameStatusDisplay.module.css";
 
 type StatusDisplayProps = {
     score: [number, number];
     turn: "p1" | "p2";
+    ongoingGame: boolean;
 };
 
 type ScoreProps = {
@@ -23,11 +25,31 @@ export default function GameStatusDisplay(props: StatusDisplayProps) {
         );
     };
 
+    const endGameMessage =
+        props.score[0] > props.score[1]
+            ? "Congratulations, Player 1!"
+            : props.score[0] < props.score[1]
+            ? "Congratulations, Player 2!"
+            : "Tie Game... Try again!";
+
     return (
         <div className={statusDisplayCSS.statusSection}>
-            <span className={statusDisplayCSS.turn}>{`Turn: ${
-                props.turn === "p1" ? "Player 1" : "Player 2"
-            }`}</span>
+            <span
+                className={
+                    props.ongoingGame
+                        ? statusDisplayCSS.turn
+                        : clsx(statusDisplayCSS.winnerMessage, {
+                              [statusDisplayCSS.p1Message]:
+                                  props.score[0] > props.score[1],
+                              [statusDisplayCSS.p2Message]:
+                                  props.score[0] < props.score[1],
+                          })
+                }
+            >
+                {props.ongoingGame
+                    ? "Turn: " + (props.turn == "p1" ? "Player 1" : "Player 2")
+                    : endGameMessage}
+            </span>
             <span className={statusDisplayCSS.scoreSection}>
                 <ScoreComponent player={"p1"} />
                 <ScoreComponent player={"p2"} />

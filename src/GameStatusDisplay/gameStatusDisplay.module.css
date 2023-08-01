@@ -16,6 +16,23 @@
     margin-bottom: 20px;
 }
 
+.winnerMessage {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 40px;
+    font-weight: bolder;
+    margin-bottom: 20px;
+    text-align: center;
+    color: dimgray;
+}
+
+.p1Message {
+    color: lightcoral;
+}
+
+.p2Message {
+    color: lightseagreen;
+}
+
 .scoreSection {
     display: flex;
     flex-direction: row;

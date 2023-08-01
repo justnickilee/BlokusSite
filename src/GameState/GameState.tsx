@@ -4,6 +4,7 @@ import Board, { BoardNavigation, TBoardUnit, getBoard } from "../Board/Board";
 import Inventory from "../Inventory/Inventory";
 import pageCSS from "./page.module.css";
 import GameStatusDisplay from "../GameStatusDisplay/GameStatusDisplay";
+import clsx from "clsx";
 
 export type Coordinate = {
     row: number;
@@ -18,6 +19,7 @@ export type BoardPiece = {
 // use react context to pass this state down to all the children https://react.dev/learn/passing-data-deeply-with-context
 
 export type GameState = {
+    ongoingGame: boolean;
     onBoard: BoardPiece[];
     p1Inventory: TPiece[];
     p2Inventory: TPiece[];
@@ -187,7 +189,6 @@ function checkCornerNeighbors(
     piece: TPiece,
     coord: Coordinate,
 ): boolean {
-    console.log(piece.player);
     for (let rowIndex = 0; rowIndex < piece.shape.length; rowIndex++) {
         for (let colIndex = 0; colIndex < piece.shape[0].length; colIndex++) {
             if (piece.shape[rowIndex][colIndex]) {
@@ -197,10 +198,8 @@ function checkCornerNeighbors(
                     (r == 0 && c == 0 && piece.player == "p1") ||
                     (r == 14 && c == 14 && piece.player == "p2")
                 ) {
-                    console.log(r, c);
                     return true;
                 }
-                console.log(r, c);
                 const cornerCoordinates = [
                     { row: r - 1, col: c - 1 },
                     { row: r - 1, col: c + 1 },
@@ -232,6 +231,7 @@ function checkCornerNeighbors(
 
 export default function GameController() {
     const [gameState, dispatch] = useReducer(reducer, {
+        ongoingGame: true,
         onBoard: [] as BoardPiece[],
         p1Inventory: getInitialShapes("p1"),
         p2Inventory: getInitialShapes("p2"),
@@ -242,25 +242,28 @@ export default function GameController() {
         selectedLocation: { row: 1, col: 1 },
     });
 
-    const handleUpdateHasStoppedPlaying = (
-        hasStoppedPlaying: [boolean, boolean],
-        turn: "p1" | "p2",
-    ) => {
-        dispatch({
-            type: "updateHasStoppedPlaying",
-            hasStoppedPlaying: hasStoppedPlaying,
-            turn: turn,
-        });
+    const handleUpdateHasStoppedPlaying = (player: "p1" | "p2") => {
+        if (player == gameState.turn) {
+            dispatch({
+                type: "updateHasStoppedPlaying",
+            });
+        } else {
+            if (gameState.ongoingGame) {
+                alert("Please wait for your turn!");
+            }
+        }
     };
 
     const handlePieceClick = (piece: TPiece) => {
-        if (piece.player == gameState.turn) {
+        if (piece.player == gameState.turn && gameState.ongoingGame) {
             dispatch({
                 type: "playerSelectedAPiece",
                 piece,
             });
         } else {
-            alert("Wait your turn!");
+            if (gameState.ongoingGame) {
+                alert("Wait your turn!");
+            }
         }
     };
 
@@ -330,23 +333,62 @@ export default function GameController() {
 
     return (
         <div className={pageCSS.page}>
-            <Inventory
-                i={gameState.p1Inventory}
-                player="p1"
-                onPieceClick={handlePieceClick}
-            />
-            <span className={pageCSS.boardAndStatusSection}>
-                <GameStatusDisplay
-                    score={gameState.score}
-                    turn={gameState.turn}
-                />
-                <Board gameState={gameState}></Board>
+            <span className={pageCSS.gameTitle}>
+                <span className={pageCSS.titleCoral}>B</span>
+                <span className={pageCSS.titleGreen}>L</span>
+                <span className={pageCSS.titleCoral}>O</span>
+                <span className={pageCSS.titleGreen}>K</span>
+                <span className={pageCSS.titleCoral}>U</span>
+                <span className={pageCSS.titleGreen}>S</span>
             </span>
-            <Inventory
-                i={gameState.p2Inventory}
-                player="p2"
-                onPieceClick={handlePieceClick}
-            />
+            <div className={pageCSS.game}>
+                <span className={pageCSS.inventoryAndOutOfMovesSection}>
+                    <Inventory
+                        i={gameState.p1Inventory}
+                        player="p1"
+                        playerHasStoppedPlaying={gameState.hasStoppedPlaying[0]}
+                        onPieceClick={handlePieceClick}
+                    />
+                    <button
+                        type="button"
+                        className={`${pageCSS.outOfMovesButton} ${
+                            gameState.hasStoppedPlaying[0]
+                                ? pageCSS.playerStopped
+                                : pageCSS.p1Playing
+                        }`}
+                        onClick={() => handleUpdateHasStoppedPlaying("p1")}
+                    >
+                        No Moves Remaining
+                    </button>
+                </span>
+                <span className={pageCSS.boardAndStatusSection}>
+                    <GameStatusDisplay
+                        score={gameState.score}
+                        turn={gameState.turn}
+                        ongoingGame={gameState.ongoingGame}
+                    />
+                    <Board gameState={gameState}></Board>
+                </span>
+                <span className={pageCSS.inventoryAndOutOfMovesSection}>
+                    <Inventory
+                        i={gameState.p2Inventory}
+                        player="p2"
+                        playerHasStoppedPlaying={gameState.hasStoppedPlaying[1]}
+                        onPieceClick={handlePieceClick}
+                    />
+                    <button
+                        type="button"
+                        className={`${pageCSS.outOfMovesButton} ${
+                            gameState.hasStoppedPlaying[1]
+                                ? pageCSS.playerStopped
+                                : pageCSS.p2Playing
+                        }`}
+                        onClick={() => handleUpdateHasStoppedPlaying("p2")}
+                    >
+                        No Moves Remaining
+                    </button>
+                </span>
+            </div>
         </div>
     );
 }
@@ -462,19 +504,34 @@ function reducer(state: GameState, action: Action): GameState {
                     action.piece.player === "p1"
                         ? [state.score[0] + pieceScore, state.score[1]]
                         : [state.score[0], state.score[1] + pieceScore],
-                turn: state.turn == "p1" ? "p2" : "p1",
+                turn:
+                    state.turn == "p1"
+                        ? state.hasStoppedPlaying[1]
+                            ? "p1"
+                            : "p2"
+                        : state.hasStoppedPlaying[0]
+                        ? "p2"
+                        : "p1",
                 selectedPiece: undefined,
                 selectedLocation: { row: 1, col: 1 },
             };
         }
         case "updateHasStoppedPlaying": {
-            return {
-                ...state,
-                hasStoppedPlaying:
-                    action.turn == "p1"
-                        ? [false, action.hasStoppedPlaying[1]]
-                        : [action.hasStoppedPlaying[0], false],
-            };
+            if (state.turn == "p1") {
+                return {
+                    ...state,
+                    ongoingGame: state.hasStoppedPlaying[1] ? false : true,
+                    turn: "p2",
+                    hasStoppedPlaying: [true, state.hasStoppedPlaying[1]],
+                };
+            } else {
+                return {
+                    ...state,
+                    ongoingGame: state.hasStoppedPlaying[0] ? false : true,
+                    turn: "p1",
+                    hasStoppedPlaying: [state.hasStoppedPlaying[0], true],
+                };
+            }
         }
         default:
             return state;
@@ -484,8 +541,6 @@ function reducer(state: GameState, action: Action): GameState {
 type Action =
     | {
           type: "updateHasStoppedPlaying";
-          turn: "p1" | "p2";
-          hasStoppedPlaying: [boolean, boolean];
       }
     | { type: "playerMadeAMove"; piece: TPiece; coord: Coordinate }
     | { type: "playerSelectedAPiece"; piece: TPiece }
