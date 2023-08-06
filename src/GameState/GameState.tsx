@@ -396,13 +396,32 @@ export default function GameController() {
     );
 }
 
+function shiftedLocation(
+    newRowLength: number,
+    newColLength: number,
+    oldCoordinate: Coordinate,
+): Coordinate {
+    const shiftedCoord: Coordinate = { ...oldCoordinate };
+    if (oldCoordinate.row + newRowLength > 15) {
+        shiftedCoord.row -= oldCoordinate.row + newRowLength - 15;
+    }
+    if (oldCoordinate.col + newColLength > 15) {
+        shiftedCoord.col -= oldCoordinate.col + newColLength - 15;
+    }
+    return shiftedCoord;
+}
+
 function reducer(state: GameState, action: Action): GameState {
     switch (action.type) {
         case "playerSelectedAPiece": {
             return {
                 ...state,
                 selectedPiece: action.piece,
-                selectedLocation: { row: 6, col: 6 },
+                selectedLocation: shiftedLocation(
+                    action.piece.shape.length,
+                    action.piece.shape[0].length,
+                    state.selectedLocation,
+                ),
             };
         }
         case "playerMovedSelectedPiece": {
@@ -444,13 +463,11 @@ function reducer(state: GameState, action: Action): GameState {
         }
         case "playerRotatedSelectedPiece": {
             const prevShape: boolean[][] = action.piece.shape;
-            const prevRowLength = prevShape.length;
-            const prevColLength = prevShape[0].length;
             const rotatedPiece = (): TPiece => {
-                const newShape = Array(prevColLength)
+                const newShape = Array(prevShape[0].length)
                     .fill(null)
                     .map((row, rowIndex) => {
-                        return Array(prevRowLength)
+                        return Array(prevShape.length)
                             .fill(null)
                             .map((col, colIndex) => {
                                 return prevShape[colIndex][rowIndex];
@@ -463,22 +480,14 @@ function reducer(state: GameState, action: Action): GameState {
                     shape: newShape,
                 };
             };
-            const shiftedLocation = (): Coordinate => {
-                const shiftedCoord: Coordinate = { ...state.selectedLocation };
-                if (state.selectedLocation.row + prevColLength > 15) {
-                    shiftedCoord.row -=
-                        state.selectedLocation.row + prevColLength - 15;
-                }
-                if (state.selectedLocation.col + prevRowLength > 15) {
-                    shiftedCoord.col -=
-                        state.selectedLocation.col + prevRowLength - 15;
-                }
-                return shiftedCoord;
-            };
             return {
                 ...state,
                 selectedPiece: rotatedPiece(),
-                selectedLocation: shiftedLocation(),
+                selectedLocation: shiftedLocation(
+                    action.piece.shape[0].length,
+                    action.piece.shape.length,
+                    state.selectedLocation,
+                ),
             };
         }
 
@@ -516,7 +525,7 @@ function reducer(state: GameState, action: Action): GameState {
                         ? "p2"
                         : "p1",
                 selectedPiece: undefined,
-                selectedLocation: { row: 1, col: 1 },
+                selectedLocation: { row: 6, col: 6 },
             };
         }
         case "updateHasStoppedPlaying": {
