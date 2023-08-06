@@ -389,6 +389,9 @@ export default function GameController() {
                     </button>
                 </span>
             </div>
+            <div className={pageCSS.pageFooter}>
+                https://github.com/justnickilee/BlokusSite
+            </div>
         </div>
     );
 }

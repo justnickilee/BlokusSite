@@ -4,6 +4,7 @@
     justify-content: start;
     align-items: center;
     height: 90svh;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .game {
@@ -77,4 +78,10 @@
     color: gray;
     background-color: #e2e2e2;
     border: 2x outset lightgray;
+}
+
+.pageFooter {
+    font-size: 20px;
+    color: gray;
+    margin-top: 40px;
 }
