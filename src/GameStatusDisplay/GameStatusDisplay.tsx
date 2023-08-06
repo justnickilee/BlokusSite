@@ -3,7 +3,6 @@ import statusDisplayCSS from "./gameStatusDisplay.module.css";
 
 type StatusDisplayProps = {
     score: [number, number];
-    turn: "p1" | "p2";
     ongoingGame: boolean;
 };
 

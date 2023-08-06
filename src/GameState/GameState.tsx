@@ -331,6 +331,13 @@ export default function GameController() {
         return () => document.removeEventListener("keydown", handleKeyDown);
     }, [gameState]);
 
+    const endGameMessage =
+        gameState.score[0] > gameState.score[1]
+            ? "Congratulations, Player 1!"
+            : gameState.score[0] < gameState.score[1]
+            ? "Congratulations, Player 2!"
+            : "Tie Game... Try again!";
+
     return (
         <div className={pageCSS.page}>
             <span className={pageCSS.gameTitle}>
@@ -341,20 +348,34 @@ export default function GameController() {
                 <span className={pageCSS.titleCoral}>U</span>
                 <span className={pageCSS.titleGreen}>S</span>
             </span>
+            <div
+                className={clsx(pageCSS.winnerMessage, {
+                    [pageCSS.p1Message]:
+                        gameState.score[0] > gameState.score[1],
+                    [pageCSS.p2Message]:
+                        gameState.score[1] > gameState.score[0],
+                })}
+            >
+                {gameState.hasStoppedPlaying[0] &&
+                gameState.hasStoppedPlaying[1]
+                    ? endGameMessage
+                    : ""}
+            </div>
             <div className={pageCSS.game}>
                 <span className={pageCSS.inventoryAndOutOfMovesSection}>
                     <Inventory
                         i={gameState.p1Inventory}
                         player="p1"
-                        playerHasStoppedPlaying={gameState.hasStoppedPlaying[0]}
+                        isPlayersTurn={gameState.turn == "p1"}
+                        score={gameState.score[0]}
                         onPieceClick={handlePieceClick}
                     />
                     <button
                         type="button"
                         className={`${pageCSS.outOfMovesButton} ${
-                            gameState.hasStoppedPlaying[0]
-                                ? pageCSS.playerStopped
-                                : pageCSS.p1Playing
+                            gameState.turn == "p1"
+                                ? pageCSS.p1Playing
+                                : pageCSS.playerStopped
                         }`}
                         onClick={() => handleUpdateHasStoppedPlaying("p1")}
                     >
@@ -362,26 +383,27 @@ export default function GameController() {
                     </button>
                 </span>
                 <span className={pageCSS.boardAndStatusSection}>
-                    <GameStatusDisplay
+                    {/* <GameStatusDisplay
                         score={gameState.score}
                         turn={gameState.turn}
                         ongoingGame={gameState.ongoingGame}
-                    />
+                    /> */}
                     <Board gameState={gameState}></Board>
                 </span>
                 <span className={pageCSS.inventoryAndOutOfMovesSection}>
                     <Inventory
                         i={gameState.p2Inventory}
                         player="p2"
-                        playerHasStoppedPlaying={gameState.hasStoppedPlaying[1]}
+                        isPlayersTurn={gameState.turn == "p2"}
+                        score={gameState.score[1]}
                         onPieceClick={handlePieceClick}
                     />
                     <button
                         type="button"
                         className={`${pageCSS.outOfMovesButton} ${
-                            gameState.hasStoppedPlaying[1]
-                                ? pageCSS.playerStopped
-                                : pageCSS.p2Playing
+                            gameState.turn == "p2"
+                                ? pageCSS.p2Playing
+                                : pageCSS.playerStopped
                         }`}
                         onClick={() => handleUpdateHasStoppedPlaying("p2")}
                     >
