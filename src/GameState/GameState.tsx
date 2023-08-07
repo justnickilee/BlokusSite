@@ -3,7 +3,6 @@ import { TPiece, getScoreOfPiece } from "../Piece/Piece";
 import Board, { BoardNavigation, TBoardUnit, getBoard } from "../Board/Board";
 import Inventory from "../Inventory/Inventory";
 import pageCSS from "./page.module.css";
-import GameStatusDisplay from "../GameStatusDisplay/GameStatusDisplay";
 import clsx from "clsx";
 
 export type Coordinate = {
