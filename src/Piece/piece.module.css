@@ -1,0 +1,45 @@
+.pieceP1 {
+    color: lightcoral;
+}
+
+.pieceP2 {
+    color: lightseagreen;
+}
+
+.pieceStopped {
+    color: gray;
+}
+
+.piece {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: start;
+    height: min-content;
+}
+
+.unit {
+    display: inline-flex;
+    width: 15px;
+    height: 15px;
+    margin: 0%;
+    padding: 0%;
+}
+
+.blank {
+    display: inline-flex;
+    width: 15px;
+    height: 15px;
+    margin: 0%;
+    padding: 0%;
+    color: none;
+}

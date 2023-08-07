@@ -1,0 +1,46 @@
+.unit {
+    display: inline-flex;
+    width: 20px;
+    height: 20px;
+    border: 3px ridge;
+    margin: 1px;
+    background-color: transparent;
+}
+
+.p1Unit {
+    background-color: lightcoral;
+    border-color: #ea4848;
+    border-style: outset;
+    outline: 1px outset lightcoral;
+}
+
+.p2Unit {
+    background-color: lightseagreen;
+    border-color: #17827d;
+    border-style: outset;
+    outline: 1px outset lightseagreen;
+}
+
+.selectedUnit {
+    background-color: lightgreen;
+    border-color: #4fe34f;
+    border-style: outset;
+    outline: 1px outset lightgreen;
+}
+
+.boardRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: start;
+    height: min-content;
+}
+
+.boardNavSection {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 80%;
+    margin-top: 40px;
+}

@@ -1,0 +1,41 @@
+.inventorySection {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 70%;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.inventoryTitle {
+    font-weight: bold;
+    font-size: 40px;
+    margin-bottom: 10px;
+    color: gray;
+}
+
+.score {
+    font-weight: bold;
+    font-size: 30px;
+    margin-bottom: 30px;
+    color: gray;
+}
+
+.p1 {
+    color: lightcoral;
+}
+
+.p2 {
+    color: lightseagreen;
+}
+
+.inventory {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: start;
+    align-items: start;
+    width: 80%;
+    height: 70%;
+}
