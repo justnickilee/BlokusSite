@@ -55,7 +55,6 @@ export default function Board(props: BoardProps) {
             );
         },
     );
-
     return <div className={boardCSS.boardSection}>{boardDisplay}</div>;
 }
 
@@ -80,32 +79,6 @@ function selectedPieceCoordinates(
     } else {
         return coordinates;
     }
-}
-
-type BoardNavProps = {
-    onArrowClick: (dir: "rot" | "u" | "d" | "r" | "l") => void;
-};
-
-export function BoardNavigation(props: BoardNavProps) {
-    return (
-        <span className={boardCSS.boardNavSection}>
-            <button type="button" onClick={() => props.onArrowClick("rot")}>
-                &#10227;
-            </button>
-            <button type="button" onClick={() => props.onArrowClick("u")}>
-                &#8593;
-            </button>
-            <button type="button" onClick={() => props.onArrowClick("d")}>
-                &#8595;
-            </button>
-            <button type="button" onClick={() => props.onArrowClick("r")}>
-                &#8594;
-            </button>
-            <button type="button" onClick={() => props.onArrowClick("l")}>
-                &#8592;
-            </button>
-        </span>
-    );
 }
 
 export function getBoard(newBoardPieces: BoardPiece[]): TBoardUnit[][] {
