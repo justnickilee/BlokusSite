@@ -60,6 +60,9 @@
     font-weight: bold;
     padding: 15px;
     border-radius: 20px;
+    color: gray;
+    background-color: #e2e2e2;
+    border: 2x outset lightgray;
 }
 
 .p1Playing {
@@ -72,12 +75,6 @@
     color: lightseagreen;
     background-color: #f4fbfb;
     border: 2px outset lightseagreen;
-}
-
-.playerStopped {
-    color: gray;
-    background-color: #e2e2e2;
-    border: 2x outset lightgray;
 }
 
 .pageFooter {
