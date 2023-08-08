@@ -6,6 +6,7 @@ import checkValidMove from "./MoveValidation";
 import reducer from "./StateReducer";
 import { EndGameMessage, GameTitle, InventoryDisplay } from "./GameComponents";
 import { getInitialShapes } from "./GamePieceSetup";
+import HelpPage from "./Help/HelpPage";
 
 export type Coordinate = {
     row: number;
@@ -45,6 +46,12 @@ export default function GameController() {
         selectedPiece: undefined,
         selectedLocation: { row: 6, col: 6 },
     });
+
+    const handleHelpButtonClick = () => {
+        dispatch({
+            type: "playerClickedHelp",
+        });
+    };
 
     const handleUpdateHasStoppedPlaying = (player: "p1" | "p2") => {
         if (player == gameState.turn) {
@@ -135,9 +142,22 @@ export default function GameController() {
         return () => document.removeEventListener("keydown", handleKeyDown);
     }, [gameState]);
 
+    if (gameState.page == "help") {
+        return <HelpPage onHelpClick={handleHelpButtonClick} />;
+    }
+
     return (
         <div className={pageCSS.page}>
-            <GameTitle />
+            <span className={pageCSS.titleAndHelp}>
+                <GameTitle />
+                <button
+                    type="button"
+                    className={pageCSS.helpButton}
+                    onClick={handleHelpButtonClick}
+                >
+                    ?
+                </button>
+            </span>
             <EndGameMessage
                 score={gameState.score}
                 hasStoppedPlaying={gameState.hasStoppedPlaying}

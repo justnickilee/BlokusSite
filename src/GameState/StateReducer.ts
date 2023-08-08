@@ -135,6 +135,12 @@ export default function reducer(state: GameState, action: Action): GameState {
                 };
             }
         }
+        case "playerClickedHelp": {
+            return {
+                ...state,
+                page: state.page == "game" ? "help" : "game",
+            };
+        }
         default:
             return state;
     }
@@ -162,4 +168,5 @@ type Action =
     | { type: "playerMadeAMove"; piece: TPiece; coord: Coordinate }
     | { type: "playerSelectedAPiece"; piece: TPiece }
     | { type: "playerMovedSelectedPiece"; dir: "u" | "d" | "r" | "l" }
-    | { type: "playerRotatedSelectedPiece"; piece: TPiece };
+    | { type: "playerRotatedSelectedPiece"; piece: TPiece }
+    | { type: "playerClickedHelp" };
