@@ -56,10 +56,10 @@ export default function reducer(state: GameState, action: Action): GameState {
             const rotatedPiece = (): TPiece => {
                 const newShape = Array(prevShape[0].length)
                     .fill(null)
-                    .map((row, rowIndex) => {
+                    .map((_, rowIndex) => {
                         return Array(prevShape.length)
                             .fill(null)
-                            .map((col, colIndex) => {
+                            .map((_, colIndex) => {
                                 return prevShape[colIndex][rowIndex];
                             })
                             .reverse();

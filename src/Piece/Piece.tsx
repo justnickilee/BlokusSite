@@ -33,7 +33,7 @@ export default function Piece(props: PieceProps) {
             key={props.piece.key}
             onClick={() => props.onPieceClick(props.piece)}
         >
-            {props.piece.shape.map((row, index) => {
+            {props.piece.shape.map((_, index) => {
                 return (
                     <RowComponent row={props.piece.shape[index]} key={index} />
                 );
