@@ -11,12 +11,39 @@
 .sectionTitle {
     font-size: 30px;
     font-weight: bold;
+    color: lightseagreen;
+}
+
+.rule {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: start;
+    align-items: start;
+    margin-bottom: 10px;
+}
+
+.ruleTitle {
+    font-size: 24px;
+    font-weight: bold;
+    color: lightcoral;
+    width: 13%;
+}
+
+.ruleText {
+    font-size: 18px;
+    font-weight: normal;
+    align-items: start;
+    color: #333333;
+    width: 100%;
 }
 
 .bodyText {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: normal;
     align-items: start;
+    color: #333333;
+    text-indent: 60px;
 }
 
 .helpSubSection {
@@ -24,4 +51,5 @@
     flex-direction: column;
     justify-content: start;
     align-items: center;
+    margin-bottom: 30px;
 }
