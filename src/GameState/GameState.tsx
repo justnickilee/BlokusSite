@@ -143,7 +143,11 @@ export default function GameController() {
     }, [gameState]);
 
     if (gameState.page == "help") {
-        return <HelpPage onHelpClick={handleHelpButtonClick} />;
+        return (
+            <div className={pageCSS.page}>
+                <HelpPage onHelpClick={handleHelpButtonClick} />
+            </div>
+        );
     }
 
     return (
